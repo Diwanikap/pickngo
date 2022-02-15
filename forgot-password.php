@@ -86,18 +86,21 @@ session_start();
         <div class="contact-grids">
             <div class="contact-right">
                 <h2>Reset Your Password</h2>
+
   
-<div>
-        <span>I Am</span>
-        <select name="user_type" class="required">
-            <option value="">Select Account Type</option>
-            <option value="customer"  >Customer</option>
-            <option value="employee" >Employee</option>
-        </select>
-</div>
+
                
 <form name="post_load" id="post_load" method="post" autocomplete="off" action="forgot-password.php">
 <!--    <p style="font:12px Arial,Helvetica,sans-serif;">Please Submit your Login Email Id.</p>-->
+    <div>
+            <span>I Am</span>
+            <select name="usertype" class="required">
+                <option value="">Select Account Type</option>
+                <option value="customer"  >Customer</option>
+                <option value="employee" >Employee</option>
+            </select>
+    </div>
+
     <div>
         <span>Email Id</span>
         <input type="email" size="32" maxlength="48" class="required" name="email" placeholder="Enter the Email"/>
@@ -113,9 +116,10 @@ session_start();
 </form>
 <?php  
 if(isset($_POST['sendcode'])){
-    $user_type=$_POST['user_type']
-    $_SESSION['user_type']=$user_type;
     $email=$_POST['email'];
+    $user_type=$_POST["usertype"];
+    $_SESSION['user_type']=$user_type;
+    
 
     if($user_type=="customer"){
         $customerEmail=new UserView();
@@ -123,7 +127,7 @@ if(isset($_POST['sendcode'])){
     }   
     else{
         $employeeEmail=new UserView();
-        $Emailresult= $customerEmail->CheckEmployeeEmail($email);
+        $Emailresult= $employeeEmail->CheckEmployeeEmail($email);
     }
     if($Emailresult){
     $randomCode=mt_rand(0,99999);

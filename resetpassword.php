@@ -116,7 +116,7 @@ if(isset($_POST['reset'])){
         }
         else{
             $Employee = new UserContro();
-            $result=$Customer-> ChangeEmployeePassword($password1,$email);
+            $result=$Employee-> ChangeEmployeePassword($password1,$email);
             session_destroy();
             header('location:employee');   
         }
