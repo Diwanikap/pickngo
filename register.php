@@ -12,7 +12,7 @@ else
 	{
 		
 	}	
-require 'dbconfig/config.php';
+include "includes/class-autoload.inc.php";
 ?>
 <!DOCTYPE html>
 <html>
@@ -113,8 +113,8 @@ $(function() {
                     <div>
                     	<span>User Name</span>
                         <input type="text" name="username" maxlength="30" value="" class="required" />
-                        <span>Name</span>
-                        <input type="text" name="pname" maxlength="30" value="" class="required" />
+                        <span>Full Name</span>
+                        <input type="text" name="name" maxlength="30" value="" class="required" />
                     </div>
                     <div>
                         <span>Mobile</span>
@@ -122,7 +122,7 @@ $(function() {
                     </div>
                     <div>
                         <span>Email</span>
-                        <input type="email" name="eml" maxlength="50" value="" class="required" />
+                        <input type="email" name="email" maxlength="50" value="" class="required" />
                     </div>
                     <div>
                         <span>Password</span>
@@ -134,59 +134,43 @@ $(function() {
                     </div>
                     <div>
                         <span>Address</span>
-                        <textarea name="addr" maxlength="100" cols="5" ></textarea>
+                        <textarea name="address" maxlength="100" cols="5" ></textarea>
                     </div>
                     
-                    <div>
-                        <span>City</span>
-                        <select name="city" id="city" class="input_long required" >
-                            <option value="">--Select--</option>
-                            <?php 
-								$query="select * from city";
-										$query_run=mysqli_query($con,$query);
-											while($row = mysqli_fetch_array($query_run)){
-												if($row['constat']==1)
-												echo "<option value='" . $row['cityname'] . "'>" . $row['cityname'] . "</option>";}
-							 ?>
-							 </select>
-                    </div>
-                    <input type="submit" Value="Register" name="register_submit" />
+                     <input type="submit" Value="Register" name="register_submit" />
                 </form>                
 									<?php 
 										if(isset($_POST['register_submit']))
 										{
-										#echo '<script type="text/javascript"> alert("Sign Up Button Clicked") </script>';
+										
 											$user_type=$_POST['user_type'];
                                             $username=preg_replace('/[^A-Za-z0-9\-]/', '',$_POST['username']);
 											$password=$_POST['password'];
 											$cpassword=$_POST['cpassword'];
-											$phno=$_POST['phone'];
-											$pname=$_POST['pname'];
-											$eml=$_POST['eml'];
-											$addr=$_POST['addr'];
-											$city=$_POST['city'];
+											$phoneno=$_POST['phone'];
+											$cname=$_POST['name'];
+											$email=$_POST['email'];
+											$address=$_POST['address'];										
 											//echo $user_type ;
 											if($user_type=="employee")
 												{
 													
 													if($password==$cpassword)
 													{
-														$query="select * from empuserinfo where username='$username'";
-														$query_run=mysqli_query($con,$query);
-														if(mysqli_num_rows($query_run)>0)
+                                                        $newCustomer=new UserView();
+                                                        $results=$newCustomer->EmployeeUserName($username);
+														if($results)
 														{
 															//Already a user
 															echo '<script type="text/javascript"> alert("User Already Exists... Try another username") </script>';
 														}
 														else
 														{
-																				$conc="shiv";
-																				$mpassword=$conc.$password;
-																				$password=$mpassword;
-															//$query="insert into empuserinfo values('$username','$password',0,$pname,$phno,$eml)";
-															$query="insert into empuserinfo values('$username','$password',0,'$pname','$phno','$eml','$addr','$city')";
-														$query_run=mysqli_query($con,$query);
-														if($query_run)
+                                                       
+                                                        $ppassword=password_hash($password,PASSWORD_DEFAULT);
+                                                        $newCustomer=new  UserContro();
+                                                        $results=$newCustomer->CreateEmployee($username,$ppassword,$cname,$phoneno,$email,$address,$status=0);
+														if($results)
 															echo '<script type="text/javascript"> alert("Registration Successful!! Verify from admin, Go to Login Page") </script>';
 														else
 															echo '<script type="text/javascript"> alert("Some Error Occured") </script>';
@@ -201,10 +185,10 @@ $(function() {
 												{
 													if($password==$cpassword)
 													{
-														$query="select * from userinfo where username='$username'";
-														$query_run=mysqli_query($con,$query);
+                                                        $newCustomer=new UserView();
+                                                        $results=$newCustomer->CutomerUserName($username);
 														
-														if(mysqli_num_rows($query_run)>0)
+														if($results)
 														{
 															//Already a user
 															
@@ -212,12 +196,12 @@ $(function() {
 														}
 														else
 														{
-															$conc="shiv";
-																				$mpassword=$conc.$password;
-																				$password=$mpassword;
-															$query="insert into userinfo values('$username','$password','$pname','$phno','$eml','$addr','$city')";
-														$query_run=mysqli_query($con,$query);
-														if($query_run)
+                                                        $ppassword=password_hash($password,PASSWORD_DEFAULT);
+													
+                                                        $newCustomer=new  UserContro();
+                                                        $results=$newCustomer->CreateCustomer($username,$ppassword,$cname,$phoneno,$email,$address);
+                                                    
+                                                        if($results)
 															echo '<script type="text/javascript"> alert("Registration Successful!! Go to Login Page") </script>';
 														else
 															echo '<script type="text/javascript"> alert("Some Error Occured") </script>';

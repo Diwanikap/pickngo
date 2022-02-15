@@ -1,6 +1,22 @@
+<?php 
+session_start();
+// if(isset($_SESSION['username']))
+// 			{
+// 				header('location:customer');
+// 			}
+// else if(isset($_SESSION['empusername']))
+// 			{
+// 				header('location:employee');
+// 			}	
+// else
+// 	{
+// 		#	echo '<script type="text/javascript"> alert("All in vain") </script>';
+// 	}			
+    include "includes/class-autoload.inc.php";
+?><!DOCTYPE html>
 <html>
 <head>
-        <title>FAQ | TYC</title>
+        <title>Forgot Password | TYC </title>
 <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!--<script src="js/jquery.min.js"></script>-->
@@ -30,7 +46,7 @@
     <span class="menu"> </span>
     <ul>
         <li ><a href="index.php">Home</a></li>
-        <!--<li class="active" ><a href="faq.php">FAQ</a></li>-->
+        <!--<li ><a href="faq.php">FAQ</a></li>-->
         <li ><a href="contact.php">Contact</a></li>
                 <li ><a href="login.php">Login</a></li>
         <li ><a href="register.php">Register</a></li>
@@ -56,13 +72,9 @@
     <div class="breadcrumbs">
         <div class="container">
             <div class="breadcrumbs-left">
-                <h1>FAQ</h1>
+                <h1>Reset Your Password</h1>
             </div>
             <div class="breadcrumbs-right">
-                <ul>
-                    <li><a href="index.php">Home</a> <label>:</label></li>
-                    <li>FAQ</li>
-                </ul>
             </div>
             <div class="clearfix"> </div>
         </div>
@@ -70,22 +82,46 @@
     <!--- bradcrumbs ---->
 </div>
 <div class="about-top-grids">
-    <div class="container">
-        
-        <!---- about-grids ---->
-        <div class="about-grids">
-            <div class="about-grids-row1">
-                                <p>
-                                    Become a customer to get items delivered, become an employee to deliver items.
-                                    <br>
-                                    <br>
-                                    No FAQs since the interface is simple.
-                                </p>            </div>
-        </div>
-        <!---- about-grids ---->
-        
+        <div class="container">
+        <div class="contact-grids">
+            <div class="contact-right">
+                <h2>Reset Your Password</h2>
+                
+               
+<form name="post_load" id="post_load" method="post" autocomplete="off" action="resetpassword.php">
+<!--    <p style="font:12px Arial,Helvetica,sans-serif;">Please Submit your Login Email Id.</p>-->
+    <div>
+        <input type="password" size="32" maxlength="48" class="required" name="pass" placeholder="Enter the password"/><br/>
+        <input type="password" size="32" maxlength="48" class="required" name="confirmpassword" placeholder="Enter the confirm password"/>
+        <input id ="submit" type="Submit" name="reset" value="Submit"/></br></br>
     </div>
-<!------ about ---->
+    <!-- <input type="submit" Value="Reset Password" name="sendpwd" /> -->
+</form>
+<?php  
+$email=$_SESSION['username'];
+if(isset($_POST['reset'])){
+    $newpass=$_POST['pass'];
+    $vernewpass=$_POST['confirmpassword'];
+    if($newpass==$vernewpass){
+        $password1=password_hash($newpass,PASSWORD_DEFAULT);
+        $Customer=new UserContro();
+       $result=$Customer-> ChangeCustomerPassword($password1,$email);   
+        session_destroy();      
+
+        header('location:customer');     
+    }else{
+        echo '<script>alert("Password didnt matched...")</script>';
+     }
+      
+}
+
+?>
+
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="footer">
@@ -135,5 +171,5 @@
     </div>
     <!----//End-bottom-footer---->
 </div>
-	</body>
+    </body>
 </html>

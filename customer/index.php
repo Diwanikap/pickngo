@@ -8,7 +8,7 @@ session_start();
 				{
 					header('location:../');
 				}
-require '../dbconfig/config.php';
+// include "includes/class-autoload.inc.php";
 ?>
 <!DOCTYPE html>
 <html>

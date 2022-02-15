@@ -12,7 +12,7 @@ else
 	{
 		#	echo '<script type="text/javascript"> alert("All in vain") </script>';
 	}			
-require 'dbconfig/config.php';
+include "includes/class-autoload.inc.php";
 ?>
 
 <!DOCTYPE HTML>
@@ -94,43 +94,34 @@ $(function() {
  <?php 
                                 if(isset($_POST['login_submit']))
                                 {
-                                #echo '<script type="text/javascript"> alert("Sign Up Button Clicked") </script>';
+                         
                                     $username=preg_replace('/[^A-Za-z0-9\-]/', '',$_POST['username']);
                                     
                                     //echo $username;
                                     $password=$_POST['password'];
-					$conc="shiv";
-					$mpassword=$conc.$password;
-					$password=$mpassword;
-                                    //preg_replace('/[^A-Za-z0-9\-]/', '', $password);
                                     $user_type=$_POST['user_type'];
                                     if($user_type=="employee")
                                         {
-                                            $query="select * from empuserinfo where username='$username' and password='$password'";
-                                            $query_run=mysqli_query($con,$query);
-                                            if(mysqli_num_rows($query_run)>0)
+
+                                            $EmployeeLogin=new UserView();
+                                            $results=$EmployeeLogin->CheckEmployeeLogin($username);
+                                            $no=$results->rowCount();
+                     
+                                            if($no>0)
                                             {
-                                                $query2="select * from empuserinfo where username='$username' and password='$password' and vstatus=0";
-                                                $query_run2=mysqli_query($con,$query2);
-                                                if(mysqli_num_rows($query_run2)>0)  
-                                                {
-                                                    echo '<script type="text/javascript"> alert("Employee not verified") </script>';
-                                                }
-                                                else
-                                                {
-                                                //success login
-                                                //$_SESSION = [];
-                                                //session_destroy();
-                                                //will see the differences
+                                                while ($row= $results->fetch() ) {  
+                                                 if(password_verify($password,$row['password'])){
+                                                     $username=$row['username'];
+                                                     header('location:employee');
                                                 $_SESSION['empusername']=$username;
-                                                $tqq="select * from empuserinfo where username='$username' and password='$password'";
-                                                $qrq=mysqli_query($con,$tqq);
-                                                $rw2=mysqli_fetch_array($qrq);
-                                                $_SESSION['empcity']=$rw2['city'];
-                                                //echo $rw2['city'];
-                                                header('location:employee');
+
                                                 }
-                                                //echo '<script type="text/javascript"> alert("found ya") </script>';
+                                                else{
+                                                    
+                                                    echo '<script type="text/javascript"> alert("Invalid UserName or Password!!!") </script>';
+                                                }
+                                            }
+                                                
                                             }
                                             else
                                             {
@@ -140,26 +131,32 @@ $(function() {
                                         }
                                     else
                                         {
-
-                                            $query="select * from userinfo where username='$username' and password='$password'";
-                                            $query_run=mysqli_query($con,$query);
-                                            if(mysqli_num_rows($query_run)>0)
+                                            $CustomerLogin=new UserView();
+                                            $results=$CustomerLogin-> CheckCustomerLogin($username);
+                                            $no=$results->rowCount();
+                     
+                                            if($no>0)
                                             {
-                                                //success login
-                                                //$_SESSION = [];
-                                                //session_destroy();
-                                                //will see the differences
-                                                $_SESSION['username']=$username;
-                                                header('location:customer');
-                                                //echo '<script type="text/javascript"> alert("found ya") </script>';
+                                                while ($row= $results->fetch() ) {  
+                                                 if(password_verify($password,$row['password'])){
+                                                    $_SESSION['username']=$username;
+                                                    header('location:customer');
+
+                                                }
+                                                else{
+                                                    
+                                                    echo '<script type="text/javascript"> alert("Invalid UserName or Password!!!") </script>';
+                                                }
+                                            }
+                                                
                                             }
                                             else
                                             {
                                                 //wrong credentials
                                                 echo '<script type="text/javascript"> alert("Sorry, Invalid UserName or Password!!!") </script>';
                                             }
-                                            //echo '<script type="text/javascript"> alert("Only Employee Login right now") </script>';
                                         }
+                                     
                                 }
                             ?>
     </div>
@@ -229,4 +226,3 @@ $(function() {
 </div>
 	</body>
 </html>
-<!---//Karthee--->

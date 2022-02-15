@@ -9,7 +9,7 @@ else
 	{
 		#	echo '<script type="text/javascript"> alert("All in vain") </script>';
 	}			
-require '../dbconfig/config.php';
+include "includes/class-autoload.inc.php";
 ?>
 <!DOCTYPE html>
 <html>

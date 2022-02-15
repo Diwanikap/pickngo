@@ -1,18 +1,18 @@
 <?php 
 session_start();
-if(isset($_SESSION['username']))
-			{
-				header('location:customer');
-			}
-else if(isset($_SESSION['empusername']))
-			{
-				header('location:employee');
-			}	
-else
-	{
-		#	echo '<script type="text/javascript"> alert("All in vain") </script>';
-	}			
-require 'dbconfig/config.php';
+// if(isset($_SESSION['username']))
+// 			{
+// 				header('location:customer');
+// 			}
+// else if(isset($_SESSION['empusername']))
+// 			{
+// 				header('location:employee');
+// 			}	
+// else
+// 	{
+// 		#	echo '<script type="text/javascript"> alert("All in vain") </script>';
+// 	}			
+    include "includes/class-autoload.inc.php";
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -92,39 +92,46 @@ require 'dbconfig/config.php';
 <!--    <p style="font:12px Arial,Helvetica,sans-serif;">Please Submit your Login Email Id.</p>-->
     <div>
         <span>Email Id</span>
-        <input type="email" size="32" maxlength="48" class="required" name="eml" />
+        <input type="email" size="32" maxlength="48" class="required" name="email" placeholder="Enter the Email"/>
+        <input id ="submit" type="Submit" name="sendcode" value="Send Code"/></br></br>
     </div>
-    <input type="submit" Value="Reset Password" name="sendpwd" />
+    <div>
+    <span>Verification code</span>
+    <input type="text" name="verifycode" placeholder="Enter Verification Code here" class="required"/> 
+                        
+    <input id ="submit" type="Submit" name="verify" value="Verify Code"/>
+    </div>
+    <!-- <input type="submit" Value="Reset Password" name="sendpwd" /> -->
 </form>
 <?php  
-if(isset($_POST['sendpwd']))
-{
-$eml=$_POST['eml'];
-$query="select * from empuserinfo where eml='".$eml."'";
-$query_run=mysqli_query($con,$query);
+if(isset($_POST['sendcode'])){
+    $email=$_POST['email'];
+    $customerEmail=new UserView();
+  $Emailresult= $customerEmail->CheckCustomerEmail($email);
+  if($Emailresult){
+    $randomCode=mt_rand(0,99999);
+    $_SESSION['random']=$randomCode;
+    $message="Your reset code is  ".$randomCode;
+    $subject="Reset Code";
+    $to=$email;
+    $result=mail($to,$subject,$message);
+    echo '<script>alert("The code has been send it")</script>';   
+    $_SESSION['username']=$email;
+  }else{
+    echo '<script>alert("There is no user for in this Email..")</script>';
+  }
+   
+}
 
-$query2="select * from userinfo where eml='".$eml."'";
-$query_run2=mysqli_query($con,$query2);
-if($row = mysqli_fetch_array($query_run))
-{
-	$_SESSION['tp']=preg_replace('/^shiv/', '',$row['password']);
-$_SESSION['eml']=$eml;
-$_SESSION['unm']=$row['username'];
-header("location:mailer.php");
-}
-else if($row = mysqli_fetch_array($query_run2))
-{$_SESSION['tp']=preg_replace('/^shiv/', '',$row['password']);
-$_SESSION['eml']=$eml;
-$_SESSION['unm']=$row['username'];
-header("location:mailer.php");
-}
-else
-{
- echo '<script type="text/javascript"> alert("Email Address Not in our data base") </script>';
-}
-}
+  if(isset($_POST['verify'])){
+      $code=$_POST['verifycode'];
+      if($code==$_SESSION['random']){
+          header('location:resetpassword.php');
+      }else{
+        echo '<script>alert("Wrong Reset Code.. Please try again..")</script>';
+      }
+  }
 ?>
-
 
             </div>
             <div class="clearfix"> </div>
