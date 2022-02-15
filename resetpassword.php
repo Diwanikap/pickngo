@@ -87,7 +87,8 @@ session_start();
             <div class="contact-right">
                 <h2>Reset Your Password</h2>
                 
-               
+
+
 <form name="post_load" id="post_load" method="post" autocomplete="off" action="resetpassword.php">
 <!--    <p style="font:12px Arial,Helvetica,sans-serif;">Please Submit your Login Email Id.</p>-->
     <div>
@@ -99,16 +100,30 @@ session_start();
 </form>
 <?php  
 $email=$_SESSION['username'];
+$user_type=$_SESSION['user_type']
+
 if(isset($_POST['reset'])){
     $newpass=$_POST['pass'];
     $vernewpass=$_POST['confirmpassword'];
     if($newpass==$vernewpass){
         $password1=password_hash($newpass,PASSWORD_DEFAULT);
-        $Customer=new UserContro();
-       $result=$Customer-> ChangeCustomerPassword($password1,$email);   
-        session_destroy();      
 
-        header('location:customer');     
+        if($user_type == customer){
+            $Customer=new UserContro();
+            $result=$Customer-> ChangeCustomerPassword($password1,$email); 
+            session_destroy();
+            header('location:customer');  
+        }
+        else{
+            $Employee = new UserContro();
+            $result=$Customer-> ChangeEmployeePassword($password1,$email);
+            session_destroy();
+            header('location:employee');   
+        }
+
+              
+
+             
     }else{
         echo '<script>alert("Password didnt matched...")</script>';
      }

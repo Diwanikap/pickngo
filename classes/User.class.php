@@ -31,6 +31,13 @@ protected function UpdateCustomerPassword($password,$email){
   $stmt=$this->connect()->prepare($sql);
   return $results=$stmt->execute([$password,$email]);
 }
+
+protected function UpdateEmployeePassword($password,$email){
+  $sql="UPDATE employee SET password=? WHERE email=?";
+  $stmt=$this->connect()->prepare($sql);
+  return $results=$stmt->execute([$password,$email]);
+}
+
 protected function VerifyCustomerEmail($email){
   $sql="SELECT * FROM customers WHERE email=?";
   $stmt=$this->connect()->prepare($sql);
@@ -38,6 +45,16 @@ protected function VerifyCustomerEmail($email){
   $result=$stmt->fetch();
   return $result; 
 }
+
+protected function VerifyEmployeeEmail($email){
+  $sql="SELECT * FROM employee WHERE email=?";
+  $stmt=$this->connect()->prepare($sql);
+  $stmt->execute([$email]);
+  $result=$stmt->fetch();
+  return $result; 
+}
+
+
 protected function VerifyCustomerUsername($username){
   $sql="SELECT * FROM customers WHERE username=?";
   $stmt=$this->connect()->prepare($sql);

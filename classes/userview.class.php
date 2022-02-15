@@ -13,6 +13,11 @@ class UserView extends User{
         $result=$this->VerifyCustomerEmail($email);
         return $result;
     }
+
+    public function CheckEmployeeEmail($email){
+        $result=$this->VerifyEmployeeEmail($email);
+        return $result;
+    }
     // public function Allusers(){
     //     $results=$this->DisplayUsers();
     //     return $results;

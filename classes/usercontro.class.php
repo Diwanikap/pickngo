@@ -4,6 +4,12 @@ class UserContro extends User{
     public function ChangeCustomerPassword($password,$email){
        return $results= $this->UpdateCustomerPassword($password,$email);   
     }
+
+    public function ChangeEmployeePassword($password,$email){
+        return $results= $this->UpdateEmployeePassword($password,$email);   
+     }
+
+
     public function CreateCustomer($username,$password,$cname,$phoneno,$email,$address){
         return $results= $this->setCustomer($username,$password,$cname,$phoneno,$email,$address);   
     }
